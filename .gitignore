@@ -1,0 +1,8 @@
+*.asv
+data
+docs
+manuscript
+output
+results
+*.docx
+*.png
