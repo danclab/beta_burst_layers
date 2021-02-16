@@ -11,51 +11,61 @@ end
 
 spm('defaults','eeg');
 
+% Load data
 subj_dir=fullfile(params.base_dir, subj_info.subj_id);
 D=spm_eeg_load(fullfile(subj_dir, 'rcresp_TafdfC.mat'));
 
-base_dir_parts=strsplit(params.base_dir,'/');
 
-plot_dir=fullfile('../output/figures',base_dir_parts{end},subj_info.subj_id);
-mkdir(plot_dir);
+% base_dir_parts=strsplit(params.base_dir,'/');
+% plot_dir=fullfile('../output/figures',base_dir_parts{end},subj_info.subj_id);
+% mkdir(plot_dir);
 
+% Get times
 times=D.time;
 zero_time=times(1)+(times(end)-times(1))/2;
-
-ntrials=size(D,3);
 times=(times-zero_time)*1000;
 
-meg_ch_idx=D.indchantype('MEG');
+% Get good trials
+ntrials=size(D,3);
+trials=setdiff([1:ntrials],D.badtrials);
 
 % Position of each meg channel
+meg_ch_idx=D.indchantype('MEG');
 ch_pos=D.coor2D(meg_ch_idx);
 % Label for each meg channel
 ch_labels=D.chanlabels(meg_ch_idx);
-trials=setdiff([1:ntrials],D.badtrials);
 
+% Data from MEG channels and good trials
 data_vals=D(meg_ch_idx,:,trials);
 
+% If no channel specified, find max
 if length(params.channel)==0
     mean_trial=mean(data_vals,3);
     mag_trial=max(mean_trial,[],2)-min(mean_trial,[],2);
     chan_idx=find(mag_trial==max(mag_trial));
+% Otherwise get the index of the specified channel
 else
     chan_idx=find(strcmp(D.chanlabels(meg_ch_idx),params.channel));
 end
 disp(sprintf('Using channel %s', D.chanlabels{meg_ch_idx(chan_idx)}));
 
+% Mean and std err of channel time series
 mean_tc=squeeze(mean(data_vals(chan_idx,:,:),3));
 stderr_tc=squeeze(std(data_vals(chan_idx,:,:),[],3))./sqrt(size(data_vals,3));
 
+% Flip data
 if params.flipped
     data_vals=-1.*data_vals;
     mean_tc=squeeze(mean(data_vals(chan_idx,:,:),3));
     stderr_tc=squeeze(std(data_vals(chan_idx,:,:),[],3))./sqrt(size(data_vals,3));
 end
+
+% Times to plot
 peak_time=find(mean_tc==min(mean_tc));
 left_min=find(mean_tc(1:peak_time-1)==max(mean_tc(1:peak_time-1)));
 right_min=peak_time+find(mean_tc(peak_time+1:end)==max(mean_tc(peak_time+1:end)));
 
+% Mean scalp topography at times
 mean_scalp_vals=squeeze(mean(data_vals(:,[left_min peak_time right_min],:),3));
     
 fig=figure('Position',[1 1 1600 400],'PaperUnits','points',...
@@ -108,7 +118,7 @@ hold off;
 xlim([times(1) times(end)]);
 xlabel('Time (ms)');
 ylabel('Field Intensitiy (fT)');
-
-saveas(fig, fullfile(plot_dir, 'sensor_data.png'), 'png');
-saveas(fig, fullfile(plot_dir, 'sensor_data.eps'), 'epsc');
-saveas(fig, fullfile(plot_dir, 'sensor_data.fig'), 'fig');
+% 
+% saveas(fig, fullfile(plot_dir, 'sensor_data.png'), 'png');
+% saveas(fig, fullfile(plot_dir, 'sensor_data.eps'), 'epsc');
+% saveas(fig, fullfile(plot_dir, 'sensor_data.fig'), 'fig');
