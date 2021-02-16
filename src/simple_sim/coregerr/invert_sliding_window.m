@@ -111,7 +111,7 @@ matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.whatconditions.a
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.invfunc = 'Classic';
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.invtype = 'MSP'; %;
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.wois = wois;
-matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.foi = [1 256];
+matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.foi = [0 256];
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.hanning = 1;
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.isfixedpatch.fixedpatch.fixedfile = {patchfilename}; % '<UNDEFINED>';
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.isfixedpatch.fixedpatch.fixedrows = [1 Inf]; %'<UNDEFINED>';

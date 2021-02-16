@@ -1,8 +1,8 @@
 function [f_vals,wois]=invert_sliding_window(subj_info, prior, mesh_name, ...
-    mesh_fname, sim_idx, type, snrdb, varargin)
+    mesh_fname, sim_idx, type, varargin)
 
-defaults = struct('base_dir', '../../../data/JB_BUTTON_LOCKED_d3_ers',...
-    'mri_dir', '../../../data/mri', 'patch_size', 5, 'n_temp_modes', 1,...
+defaults = struct('base_dir', '../../data/JB_BUTTON_LOCKED_d3_ers',...
+    'mri_dir', '../../data/mri', 'patch_size', 5, 'n_temp_modes', 1,...
     'data_type', 'mean_evoked', 'win_size', 10, 'win_overlap',true,...
     'recompute_lgain',true);  %define default values
 params = struct(varargin{:});
@@ -14,7 +14,7 @@ end
 
 % Where to put output data
 base_dir_parts=strsplit(params.base_dir,filesep);
-data_dir=fullfile('../../../output/data',base_dir_parts{end},subj_info.subj_id,'simple_sim',sprintf('snr_%d',snrdb));
+data_dir=fullfile('../../output/data',base_dir_parts{end},subj_info.subj_id,'simple_sim');
 
 % Data file to load
 fname=sprintf('msim_%s_%d_grey_rcresp_TafdfC.mat',type,sim_idx);
@@ -111,7 +111,7 @@ matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.whatconditions.a
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.invfunc = 'Classic';
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.invtype = 'MSP'; %;
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.wois = wois;
-matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.foi = [0 256];
+matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.foi = [1 256];
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.hanning = 1;
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.isfixedpatch.fixedpatch.fixedfile = {patchfilename}; % '<UNDEFINED>';
 matlabbatch{batch_idx}.spm.meeg.source.invertiter_slidingwindow.isstandard.custom.isfixedpatch.fixedpatch.fixedrows = [1 Inf]; %'<UNDEFINED>';

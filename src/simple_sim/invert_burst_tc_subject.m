@@ -1,7 +1,7 @@
-function invert_burst_tc_subject(subj_info, sim_idx, type, snrdb, varargin)
+function invert_burst_tc_subject(subj_info, sim_idx, type, varargin)
 
-defaults = struct('base_dir', '../../../data/JB_BUTTON_LOCKED_d3_ers',...
-    'surf_dir', '../../../data/surf', 'mri_dir', '../../../data/mri', 'patch_size', 5,...
+defaults = struct('base_dir', '../../data/JB_BUTTON_LOCKED_d3_ers',...
+    'surf_dir', '../../data/surf', 'mri_dir', '../../data/mri', 'patch_size', 5,...
     'win_size', 10, 'win_overlap',true,'n_temp_modes', 4,...
     'data_type', 'mean_evoked', 'plot_dir', '');  %define default values
 params = struct(varargin{:});
@@ -15,22 +15,22 @@ spm('defaults','eeg');
 spm_jobman('initcfg');
 
 base_dir_parts=strsplit(params.base_dir,filesep);
-data_dir=fullfile('../../../output/data',base_dir_parts{end},subj_info.subj_id,'simple_sim',sprintf('snr_%d',snrdb));
+data_dir=fullfile('../../output/data',base_dir_parts{end},subj_info.subj_id,'simple_sim');
 
 % Where to save plots
 if length(params.plot_dir)==0
-    params.plot_dir=fullfile('../../../output/figures',base_dir_parts{end},...
+    params.plot_dir=fullfile('../../output/figures',base_dir_parts{end},...
         subj_info.subj_id,params.data_type,...
-        sprintf('%d_temp_modes', params.n_temp_modes),'simple_sim',sprintf('snr_%d',snrdb));
+        sprintf('%d_temp_modes', params.n_temp_modes),'simple_sim');
 end
 if exist(params.plot_dir,'dir')~=7
     mkdir(params.plot_dir);
 end
 
 pial_clusters=invert_burst_subject(subj_info,...
-    sim_idx, type, snrdb, 'base_dir',params.base_dir,'surf_dir', params.surf_dir ,...
+    sim_idx, type, 'base_dir',params.base_dir,'surf_dir', params.surf_dir ,...
     'mri_dir', params.mri_dir,'patch_size', params.patch_size,...
-    'data_type', params.data_type, 'plot_dir', params.plot_dir, 'plot', false);
+    'data_type', params.data_type, 'plot_dir', params.plot_dir);
 
 fname=sprintf('msim_%s_%d_grey_rcresp_TafdfC.mat',type,sim_idx);
 if strcmp(params.data_type,'evoked')
@@ -71,7 +71,7 @@ for cluster_idx=1:length(pial_clusters)
         for m_idx=1:length(mesh_names)
             [cluster.tc_fvals(v_idx,m_idx,:),wois]=invert_sliding_window(subj_info,...
                 priors{m_idx}, mesh_names{m_idx}, mesh_fnames{m_idx},...
-                sim_idx, type, snrdb, 'base_dir', params.base_dir,'mri_dir', params.mri_dir,...
+                sim_idx, type, 'base_dir', params.base_dir,'mri_dir', params.mri_dir,...
                 'patch_size', 5, 'n_temp_modes', 4,...
                 'data_type', params.data_type, 'win_size', 10,...
                 'win_overlap',params.win_overlap,...
@@ -90,8 +90,6 @@ for cluster_idx=1:length(pial_clusters)
 
     cluster.f_diff=squeeze(cluster.tc_fvals(:,2,left_idx:right_idx)-cluster.tc_fvals(:,1,left_idx:right_idx));
     cluster.f_diff=reshape(cluster.f_diff,[size(cluster.tc_fvals,1) (right_idx-left_idx+1)]); 
-    %base_fdiff=mean(cluster.f_diff(:,[1:3 end-2:end]),2);
-    %cluster.f_diff=cluster.f_diff-repmat(base_fdiff,1,size(cluster.f_diff,2));
     new_pial_clusters(cluster_idx)=cluster;
 end
 
@@ -127,6 +125,6 @@ plot([inner_times(left_idx) inner_times(right_idx)],[-3 -3],'k--');
 xlim([inner_times(left_idx) inner_times(right_idx)]);
 xlabel('Time (ms)')
 ylabel('Fpial-Fwhite');
-% saveas(fig, fullfile(params.plot_dir, sprintf('pial-wm_%s_%d_free_energy_burst_tc_pial.png',type,sim_idx)), 'png');
-% saveas(fig, fullfile(params.plot_dir, sprintf('pial-wm_%s_%d_free_energy_burst_tc_pial.eps',type,sim_idx)), 'eps');
-% saveas(fig, fullfile(params.plot_dir, sprintf('pial-wm_%s_%d_free_energy_burst_tc_pial.fig',type,sim_idx)), 'fig');
+saveas(fig, fullfile(params.plot_dir, sprintf('pial-wm_%s_%d_free_energy_burst_tc_pial.png',type,sim_idx)), 'png');
+saveas(fig, fullfile(params.plot_dir, sprintf('pial-wm_%s_%d_free_energy_burst_tc_pial.eps',type,sim_idx)), 'eps');
+saveas(fig, fullfile(params.plot_dir, sprintf('pial-wm_%s_%d_free_energy_burst_tc_pial.fig',type,sim_idx)), 'fig');

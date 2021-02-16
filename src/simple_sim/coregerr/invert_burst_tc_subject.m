@@ -90,6 +90,8 @@ for cluster_idx=1:length(pial_clusters)
 
     cluster.f_diff=squeeze(cluster.tc_fvals(:,2,left_idx:right_idx)-cluster.tc_fvals(:,1,left_idx:right_idx));
     cluster.f_diff=reshape(cluster.f_diff,[size(cluster.tc_fvals,1) (right_idx-left_idx+1)]); 
+    %base_fdiff=mean(cluster.f_diff(:,[1:3 end-2:end]),2);
+    %cluster.f_diff=cluster.f_diff-repmat(base_fdiff,1,size(cluster.f_diff,2));
     new_pial_clusters(cluster_idx)=cluster;
 end
 
