@@ -6,21 +6,15 @@ addpath('./preprocessing');
 % Run preprocessing
 for i=1:length(subjects)
     subj_id=subjects(i).subj_id;
-    short_id=subj_id(1:2);
-    if i==7
-        short_id=subj_id(1:3);
-    end
-    preprocess(fullfile('..\data',data_dir,short_id),...
+    preprocess(fullfile('..\data',data_dir,subj_id),...
         fullfile('..\output\data',data_dir,subj_id));
 end
 rmpath('./preprocessing');
 
 % Run localization and sliding time window inversion
 for i=1:length(subjects)
-    invert_burst_tc_subject(subjects(i),'base_dir',...
-        fullfile('../output/data',data_dir));
+    invert_burst_tc_subject(subjects(i),'base_dir',fullfile('../output/data',data_dir));
 end
-close all
 
 % Invert combined surface
 for i=1:length(subjects)
@@ -35,6 +29,3 @@ for i=1:length(subjects)
         '../data/surf','mri_dir', '../data/mri','patch_size',5,...
         'n_temp_modes',4);
 end
-
-% Plot results
-plot_subjects_tc(subjects, 'base_dir',fullfile('../output/data',data_dir));
