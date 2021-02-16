@@ -16,7 +16,6 @@ percent_thresh=.8;
 
 % Where to put output data
 base_dir_parts=strsplit(params.base_dir,filesep);
-raw_data_dir=fullfile(params.base_dir,subj_info.subj_id);
 data_dir=fullfile('../output/data',base_dir_parts{end},subj_info.subj_id);
 mkdir(data_dir);
 
@@ -41,17 +40,17 @@ subj_surf_dir=fullfile(params.surf_dir, sprintf('%s-synth',...
     subj_info.subj_id),'surf');
 pial_original_fname=fullfile(subj_surf_dir,'pial.gii');
 pial_fname=fullfile(subj_surf_dir,'pial.ds.link_vector.gii');
+pial=gifti(pial_fname);
 pial_inflated_fname=fullfile(subj_surf_dir, 'pial.ds.inflated.gii');
+pial_inflated=gifti(pial_inflated_fname);    
 wm_fname=fullfile(subj_surf_dir,'white.ds.link_vector.gii');
 wm_inflated_fname=fullfile(subj_surf_dir, 'white.ds.inflated.gii');
 
+% Compute link vectors and save in pial surface
 norm=compute_surface_normals(params.surf_dir, sprintf('%s-synth',subj_info.subj_id), 'pial', 'link_vector');
-pial=gifti(pial_fname);
 pial.normals=norm;
 save(pial,pial_fname);
  
-pial_inflated=gifti(pial_inflated_fname);    
-
 % Which vertices belong to which hemisphere
 pial_hemisphere_map=get_hemisphere_map(pial_fname, pial_original_fname,'recompute',false);
 
@@ -66,17 +65,16 @@ spm_jobman('initcfg');
 % Create smoothed meshes
 [smoothkern]=spm_eeg_smoothmesh_mm(pial_fname, params.patch_size);
 
-% Preprocess if neeeded
-if exist(data_file,'file')~=2
-    preprocess(raw_data_dir, data_dir);    
-end
-
 % Coregistered filename
 coreg_fname=fullfile(data_dir, 'pial_mrcresp_TafdfC.mat');
-    
+ 
+% Run inversion
 invert_ebb(subj_info, data_file, coreg_fname, pial_fname,...
     'surf_dir', params.surf_dir, 'mri_dir', params.mri_dir,...
     'patch_size', params.patch_size, 'n_temp_modes', params.n_temp_modes);        
+
+D=spm_eeg_load(coreg_fname);
+F=D.inv{1}.inverse.F;
 
 % Load mesh results
 mesh_results=gifti(fullfile(data_dir, 'pial_mrcresp_TafdfC_1_t-2000_-1800_f_1.gii'));
@@ -141,6 +139,7 @@ end
 
 invert_burst_subject_results=[];
 invert_burst_subject_results.params=params;
+invert_burst_subject_results.F=F;
 invert_burst_subject_results.percent_thresh=percent_thresh;
 invert_burst_subject_results.data_file=data_file;
 invert_burst_subject_results.clusters=clusters;
