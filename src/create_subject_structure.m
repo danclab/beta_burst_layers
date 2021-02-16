@@ -17,7 +17,7 @@ subs(1).camera_up_vector('back')=[0.0,0.7,1];
 subs(1).camera_position=dict();
 subs(1).camera_position('topdown')=[18.4 57.27 1745];
 subs(1).camera_position('back')=[103.152 -1552.014 -736.475];
-subs(1).runs=[1]
+subs(1).runs=[1];
 
 subs(2).subj_id = 'rh110484';
 subs(2).headcast_t1 = 'pd_nw_mtflash3d_v3e_HeadCast_12ch_0002/s2014-10-07_14-18-142013-00001-00192-1.nii';
