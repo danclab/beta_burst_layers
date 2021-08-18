@@ -4,7 +4,9 @@ Laminar dynamics of beta bursts
 Simulation and analysis code for inferring laminar dynamics of beta bursts in human MEG data.
 
 > JJ Bonaiuto, S Little, SA Neymotin, SR Jones, GR Barnes, S Bestmann<br>
-> **Laminar dynamics of beta bursts in human motor cortex**<br>
+> **Laminar dynamics of high amplitude beta bursts in human motor cortex**<br>
+> NeuroImage 2020, https://www.sciencedirect.com/science/article/pii/S1053811921007527<br>
+> (bioRxiv link: https://www.biorxiv.org/content/10.1101/2021.02.16.431412v1)
 
 
 ## Requirements:
